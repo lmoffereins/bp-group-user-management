@@ -13,7 +13,7 @@
  * Description:       Integrate BuddyPress group member management with WordPress user management.
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins
- * Version:           1.0.0
+ * Version:           0.0.2
  * Text Domain:       bp-group-user-management
  * Domain Path:       /languages/
  * GitHub Plugin URI: lmoffereins/bp-group-user-management
@@ -26,14 +26,14 @@ if ( ! class_exists( 'BP_Group_User_Management' ) ) :
 /**
  * Main plugin class
  *
- * @since 1.0.0
+ * @since 0.0.1
  */
 class BP_Group_User_Management {
 
 	/**
 	 * Main plugin instance follows singleton pattern
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @uses BP_Group_User_Management::setup_globals()
 	 * @uses BP_Group_User_Management::includes()
@@ -61,13 +61,13 @@ class BP_Group_User_Management {
 	/**
 	 * Setup class default variables
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 */
 	private function setup_globals() {
 
 		/** Version **************************************************/
 
-		$this->version      = '1.0.0';
+		$this->version      = '0.0.2';
 
 		/** Plugin ***************************************************/
 
@@ -97,7 +97,7 @@ class BP_Group_User_Management {
 	/**
 	 * Include required files
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 */
 	private function includes() {
 
@@ -121,7 +121,7 @@ class BP_Group_User_Management {
 	/**
 	 * Setup default actions and filters
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 */
 	private function setup_actions() {
 
@@ -174,7 +174,7 @@ class BP_Group_User_Management {
 	 *
 	 * Returns users that have no groups if 'bp_group_id' is set to -1.
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @uses BP_Groups_Hierarchy::has_children()
 	 * 
@@ -208,73 +208,19 @@ class BP_Group_User_Management {
 					|| ( isset( $_REQUEST['bp_group_hierarchy'] ) && $_REQUEST['bp_group_hierarchy'] )
 				) ) {
 
-				// Group has hierarchy
-				// @todo ensure to query full depth
-				if ( $children = BP_Groups_Hierarchy::has_children( $group_ids[0] ) ) {
+				// Walk hierarchy
+				$hierarchy = new ArrayIterator( $group_ids );
+				foreach ( $hierarchy as $gid ) {
 
-					// Stack holds (a reference to) the entire stack of ids => array( child ids => array() ) )
-					$stack  =  $children;
-					$_stack =& $stack;
-
-					// Index holds the position of the iterator in the tree
-					$index = array( 0 );
-
-					// Building the stack
-					while ( ! empty( $index ) ) {
-
-						echo 'Children, stack, _stack, index:<br/>';
-						var_dump( $children );
-						echo '<br/>';
-						var_dump( $stack );
-						echo '<br/>';
-						var_dump( $_stack );
-						echo '<br/>';
-						var_dump( $index );
-						echo '<br/>';
-
-						// Add child group ids to the collection
-						$group_ids = array_merge( $group_ids, $children );
-
-						/**
-						 * Find children of next group in tree with children. If no children are found,
-						 * the iterator is moved, else continue. 
-						 */
-						while ( ! $children = BP_Groups_Hierarchy::has_children( $_stack[ end( $index ) ] ) ) {
-
-							// Go back to the grand parent if the current parent is through
-							while ( ! array_key_exists( end( $index ) + 1, $_stack ) ) {
-
-								// Remove last index
-								array_pop( $index );
-							}
-
-							// Leave entire loop if stack is empty
-							if ( empty( $index ) )
-								break 2;
-
-							// Increment next last index
-							$index[] = array_pop( $index ) + 1;
-
-							// Set next stack reference position
-							foreach ( $index as $pos ) {
-								$_stack =& $_stack[ $pos ];
-							}
-						}
-
-						// Insert children in stack
-						$_stack[ end( $index ) ] = $children;
-
-						// Set next stack reference position
-						foreach ( $index as $pos ) {
-							$_stack =& $_stack[ $pos ];
-						}
-
-						// Add new level to the iterator
-						$index[] = 0;
+					// Add child group ids when found
+					if ( $children = BP_Groups_Hierarchy::has_children( $gid ) ) {
+						foreach ( $children as $child_id )
+							$hierarchy->append( (int) $child_id );
 					}
-
-					var_dump( $index, $group_ids );
 				}
+
+				// Set hierarchy group id collection
+				$group_ids = $hierarchy->getArrayCopy();
 			}
 
 			// Append sql to query WHERE clause
@@ -293,7 +239,7 @@ class BP_Group_User_Management {
 	/**
 	 * Output the add users to group dropdown
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @uses bp_groups_dropdown()
 	 */
@@ -322,7 +268,7 @@ class BP_Group_User_Management {
 	/**
 	 * Output the remove users from group dropdown
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @uses bp_groups_dropdown()
 	 */
@@ -354,7 +300,7 @@ class BP_Group_User_Management {
 	 *
 	 * The BP groups join and leave functions have their own internal checks.
 	 * 
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @todo redirect to current page (search/paging)
 	 * @todo send user feedback message
@@ -398,7 +344,7 @@ class BP_Group_User_Management {
 	/**
 	 * Output the filter users by group dropdown
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @uses submit_button()
 	 * @uses bp_groups_dropdown()
@@ -447,7 +393,7 @@ class BP_Group_User_Management {
 	/**
 	 * Display a 'without-group' dropdown option, with or without custom text
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 * 
 	 * @param string $dropdown HTML element
 	 * @param array $args Dropdown arguments
@@ -501,7 +447,7 @@ class BP_Group_User_Management {
 	/**
 	 * Display the member count per group in the dropdown
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 * 
 	 * @param string $title Group dropdown title value
 	 * @param string $output HTML select element
@@ -536,7 +482,7 @@ class BP_Group_User_Management {
 	/**
 	 * Add current group query args to the role view links
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @uses DomDocument
 	 * 
@@ -580,7 +526,7 @@ class BP_Group_User_Management {
 	/**
 	 * Output custom styling
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 */
 	public function users_print_styles() {
 		?>
@@ -628,7 +574,7 @@ class BP_Group_User_Management {
 	/**
 	 * Add group column to user management panel
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 * 
 	 * @uses current_user_can()
 	 * 
@@ -648,7 +594,7 @@ class BP_Group_User_Management {
 	/**
 	 * Return group column content on user management panel
 	 * 
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 * 
 	 * @uses groups_total_groups_for_user()
 	 * 
@@ -699,7 +645,7 @@ class BP_Group_User_Management {
 	 * 
 	 * @link https://buddypress.trac.wordpress.org/ticket/5456
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 * 
 	 * @param  string $query
 	 * @param  array $sql
@@ -729,7 +675,7 @@ class BP_Group_User_Management {
 	/**
 	 * Add new group link to the Create New admin bar menu
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 * 
 	 * @param object $wp_admin_bar
 	 */
@@ -759,7 +705,7 @@ class BP_Group_User_Management {
 /**
  * Initialize the plugin
  *
- * @since 1.0.0
+ * @since 0.0.1
  *
  * @uses bp_is_active() To check if groups component is active
  */

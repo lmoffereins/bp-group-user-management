@@ -12,149 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 /** Dropdown *********************************************************/
 
-if ( ! function_exists( 'bp_groups_dropdown' ) ) :
-/**
- * Display a group select element
- *
- * @since 1.0.0
- *
- * @param array $args Arguments for bp_has_groups()
- *
-function bp_groups_dropdown( $args = array() ) {
-	echo bp_groups_get_dropdown( $args );
-}
-endif;
-
-if ( ! function_exists( 'bp_groups_get_dropdown' ) ) :
-/**
- * Return a group select element
- *
- * @since 1.0.0
- *
- * @param array $args Arguments for bp_has_groups()
- * @return string Groups select element
- *
-function bp_groups_get_dropdown( $args = array() ) {
-	global $groups_template;
-
-	// Setup default args
-	$args = wp_parse_args( $args, array(
-
-		// HTML attributes
-		'name'             => '',
-		'id'               => '',
-		'class'            => '',
-		'title'            => '',
-		'multiple'         => false,
-		'tab_index'        => 0,
-
-		// Elements
-		'selected'                  => false,
-		'show_option_none'          => __('Select a group', 'bp-group-user-management'),
-		'show_option_without_group' => false,
-		'show_member_count'         => false,
-
-		// Query
-		'type'             => 'alphabetical',
-		'page'             => null,
-		'per_page'         => null,
-		'search_terms'     => false,
-
-		// Hierarchy
-		'parent_id'        => null
-
-	) );
-	extract( $args );
-
-	// Setup local vars
-	$output = '';
-	$bpgum  = bp_group_user_management();
-	$depth  = $parent = 0;
-	$groups = array();
-
-	// Groups are found through hierarchy or in the usual way
-	if ( $bpgum->bp_group_hierarchy && bp_has_groups_hierarchy( $args ) || bp_has_groups( $args ) ) {
-
-		// Sanitize attributes
-		$name      = esc_attr( $name );
-		$class     = esc_attr( $class );
-		$id        = empty( $id )         ? $name                    : esc_attr( $id );
-		$multiple  = $multiple            ? ' multiple'              : '';
-		$tab_index = (int) $tab_index > 0 ? " tabindex='$tab_index'" : '';
-
-		// Build dropdown
-		$output  = "<select name='$name' id='$id' class='$class' $multiple $tab_index>\n";
-
-		// Option select none
-		if ( ! empty( $show_option_none ) )
-			$output .= "<option value=''>$show_option_none</option>";
-
-		// Option select without a group
-		if ( ! empty( $show_option_without_group ) ) {
-			if ( $show_member_count )
-				$show_option_without_group .= ' (' . bp_get_users_without_group_total() . ')';
-			$output .= "<option value='_no' " . selected( $selected, '_no', false ) . ">$show_option_without_group</option>";
-		}
-
-		// Walk all groups
-		while ( bp_groups() ) : bp_the_group();
-
-			// Setup group name
-			$group_name = bp_get_group_name();
-			if ( $bpgum->bp_group_hierarchy && bp_group_hierarchy_has_parent() ) {
-
-				// Increase iterator and update parent
-				if ( $parent != $groups_template->group->parent_id ) {
-					$parent = $groups_template->group->parent_id;
-					$depth++;
-				}
-
-				// Indent name with spaces
-				$group_name = str_repeat('&nbsp;&nbsp;&nbsp;', $depth) . $group_name;
-			} else {
-				$depth = $parent = 0;
-			}
-
-			// Append group member count
-			if ( $show_member_count )
-				$group_name .=  ' (' . bp_get_group_total_members() . ')';
-
-			// Create group option
-			$output .= '<option value="' . bp_get_group_id() . '" ' . selected( $selected, bp_get_group_id(), false ) . '>' . $group_name . '</option>';
-
-		endwhile;
-		$output .= '</select>';
-
-		// Store groups for further use
-		$groups = $groups_template->groups;
-	}
-
-	return apply_filters( 'bp_groups_get_dropdown', $output, $groups, $args );
-}
-endif;
-
-if ( ! function_exists( 'bp_get_users_without_group_total' ) ) :
-/**
- * Return the count of users without groups
- *
- * @since 1.0.0
- *
- * @return int User count
- */
-function bp_get_users_without_group_total() {
-	global $wpdb;
-
-	$bp = buddypress();
-	$total = $wpdb->get_var( "SELECT COUNT(ID) FROM $wpdb->users WHERE $wpdb->users.ID NOT IN ( SELECT user_id FROM {$bp->groups->table_name_members} )" );
-
-	return (int) apply_filters( 'bp_get_users_without_group_total', $total );
-}
-endif;
-
 /**
  * Output a select box allowing to pick a group/groups.
  *
- * @since 1.0.0
+ * @since 0.0.1
  *
  * @param mixed $args See {@link bp_groups_get_dropdown()} for arguments
  */
@@ -164,7 +25,7 @@ function bp_groups_dropdown( $args = '' ) {
 	/**
 	 * Output a select box allowing to pick a group/groups.
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @param mixed $args The function supports these args:
 	 *  - selected: Selected ID or array of selected IDs, to not have any 
@@ -215,11 +76,12 @@ function bp_groups_dropdown( $args = '' ) {
 			'orderby'            => 'name',
 			'order'              => 'ASC',
 			'type'               => 'alphabetical',
+			'show_hidden'        => current_user_can( 'bp_moderate' ),
 			'walker'             => '',
 
 			// Output-related
 			'select_id'          => 'bp_group_id',
-			// 'tab'                => bp_get_tab_index(),
+			'tab'                => '',
 			'options_only'       => false,
 			'show_none'          => false,
 			'show_without_group' => false,
@@ -249,17 +111,18 @@ function bp_groups_dropdown( $args = '' ) {
 
 		/** Setup variables ***************************************************/
 
-		$retval   = '';
-		$callback = $bpgum->bp_group_hierarchy ? 'BP_Groups_Hierarchy::get_tree' : 'groups_get_groups';
-		$groups   = call_user_func_array( $callback, array( array(
+		$retval = '';
+		$groups = groups_get_groups( array(
 			'visibility'         => $r['visibility'],
 			'exclude'            => $r['exclude'],
 			'parent_id'          => $r['parent_id'],
 			'orderby'            => $r['orderby'],
 			'order'              => $r['order'],
 			'type'               => $r['type'],
+			'show_hidden'        => $r['show_hidden'],
 			'walker'             => $r['walker'],
-		) ) );
+		) );
+		$groups = $groups['groups'];
 
 		/** Drop Down *********************************************************/
 
@@ -270,7 +133,7 @@ function bp_groups_dropdown( $args = '' ) {
 			$disabled  = disabled( $r['disabled'], true, false );
 
 			// Setup the tab index attribute
-			$tab       = !empty( $r['tab'] ) ? ' tabindex="' . intval( $r['tab'] ) . '"' : '';
+			$tab       = ! empty( $r['tab'] ) ? ' tabindex="' . intval( $r['tab'] ) . '"' : '';
 
 			// Open the select tag
 			$retval   .= '<select name="' . esc_attr( $r['select_id'] ) . '" id="' . esc_attr( $r['select_id'] ) . '"' . $disabled . $tab . '>' . "\n";
@@ -312,7 +175,7 @@ if ( class_exists( 'Walker' ) && ! class_exists( 'BP_Group_Dropdown' ) ) :
 /**
  * Create HTML dropdown list for BuddyPress groups.
  *
- * @since 1.0.0
+ * @since 0.0.1
  * @uses Walker
  */
 class BP_Group_Dropdown extends Walker {
@@ -320,7 +183,7 @@ class BP_Group_Dropdown extends Walker {
 	/**
 	 * @see Walker::$tree_type
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @var string
 	 */
@@ -329,7 +192,7 @@ class BP_Group_Dropdown extends Walker {
 	/**
 	 * @see Walker::$db_fields
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @var array
 	 */
@@ -340,7 +203,7 @@ class BP_Group_Dropdown extends Walker {
 	/**
 	 * Set the tree_type
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 */
 	public function __construct() {
 		$this->tree_type = 'group';
@@ -349,7 +212,7 @@ class BP_Group_Dropdown extends Walker {
 	/**
 	 * @see Walker::start_el()
 	 *
-	 * @since 1.0.0
+	 * @since 0.0.1
 	 *
 	 * @param string $output Passed by reference. Used to append additional
 	 *                        content.
@@ -381,3 +244,22 @@ class BP_Group_Dropdown extends Walker {
 
 }
 endif;
+
+if ( ! function_exists( 'bp_get_users_without_group_total' ) ) :
+/**
+ * Return the count of users without groups
+ *
+ * @since 0.0.1
+ *
+ * @return int User count
+ */
+function bp_get_users_without_group_total() {
+	global $wpdb;
+
+	$bp = buddypress();
+	$total = $wpdb->get_var( "SELECT COUNT(ID) FROM $wpdb->users WHERE $wpdb->users.ID NOT IN ( SELECT user_id FROM {$bp->groups->table_name_members} )" );
+
+	return (int) apply_filters( 'bp_get_users_without_group_total', $total );
+}
+endif;
+

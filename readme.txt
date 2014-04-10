@@ -3,7 +3,7 @@ Contributors: Offereins
 Tags: buddypress, groups, member, user, management
 Requires at least: 3.8
 Tested up to: 3.9
-Stable tag: 1.0.0
+Stable tag: 0.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,8 +11,8 @@ Integrate BP group member management with WP user management.
 
 == Description ==
 
-Manage BuddyPress group members within the WordPress user management screen:
-* Filter user management by groups and view only group members
+Manage BuddyPress group members within the WordPress User Management screen:
+* Filter users by groups
 * Add users to groups
 * Remove users from groups
 
@@ -31,5 +31,9 @@ Supports the following BuddyPress group plugins:
 
 == Changelog ==
 
-= 1.0.0 =
+= 0.0.2 =
+* Fix group member query for hierarchy
+* Fix group dropdown for hidden groups and no hierarchy
+
+= 0.0.1 =
 * Initial release
