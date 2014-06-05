@@ -187,7 +187,7 @@ class BP_Group_User_Management {
 		$qv = $query->query_vars;
 		$bp = buddypress();
 
-		// Bail if no group ID query var, direct or from $_REQUEST
+		// Bail if no group ID query var, direct or in $_REQUEST
 		if (   ( ! isset( $qv['bp_group_id']       ) || empty( $qv['bp_group_id']       ) )
 			&& ( ! isset( $_REQUEST['bp_group_id'] ) || empty( $_REQUEST['bp_group_id'] ) )
 			)
@@ -411,11 +411,10 @@ class BP_Group_User_Management {
 		$pos = 0;
 
 		// Setup walker title filter group argument
-		$title  = esc_html__( 'Without group', 'bp-group-user-management' );
-		$group  = array( 
+		$group = array( 
 			'id'           => -1, 
 			'creator_id'   => 0,
-			'name'         => $title,
+			'name'         => esc_html__( 'Without group', 'bp-group-user-management' ),
 			'slug'         => '',
 			'description'  => '',
 			'status'       => 'hidden',
@@ -426,9 +425,13 @@ class BP_Group_User_Management {
 			$group['parent_id'] = 0;
 
 		// Create the 'without-value' option tag
-		$without = $dom->createElement( 'option', apply_filters( 'bp_walker_dropdown_group_title', $title, '', (object) $group, 0, $args ) );
+		$without = $dom->createElement( 'option', apply_filters( 'bp_walker_dropdown_group_title', $group['name'], '', (object) $group, 0, $args ) );
 		$without->setAttribute( 'value', '-1' );
 		$without->setAttribute( 'class', 'level-0' );
+
+		// Is option selected?
+		if ( ! empty( $_REQUEST['bp_group_id'] ) && -1 == $_REQUEST['bp_group_id'] )
+			$without->setAttribute( 'selected', 'selected' );
 
 		// Position increments when 'no-value' option is present
 		if ( ! empty( $args['show_none'] ) )
