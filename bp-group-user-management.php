@@ -258,7 +258,7 @@ class BP_Group_User_Management {
 		// Setup dropdown args
 		$args = array(
 			'select_id' => 'join_group',
-			'show_none' => __('Add to group&hellip;', 'bp-group-user-management')
+			'show_none' => __( 'Add to group&hellip;', 'bp-group-user-management' )
 		); ?>
 
 		<label class="screen-reader-text" for="join_group"><?php _e( 'Add to group&hellip;', 'bp-group-user-management' ); ?></label>
@@ -287,7 +287,7 @@ class BP_Group_User_Management {
 		// Setup dropdown args
 		$args = array(
 			'select_id' => 'leave_group',
-			'show_none' => __('Remove from group&hellip;', 'bp-group-user-management')
+			'show_none' => __( 'Remove from group&hellip;', 'bp-group-user-management' )
 		); ?>
 
 		<label class="screen-reader-text" for="leave_group"><?php _e( 'Remove from group&hellip;', 'bp-group-user-management' ); ?></label>
@@ -364,7 +364,7 @@ class BP_Group_User_Management {
 		// Setup dropdown args
 		$args = array(
 			'selected'           => isset( $_GET['bp_group_id'] ) ? $_GET['bp_group_id'] : false,
-			'show_none'          => __('Filter by group&hellip;', 'bp-group-user-management'),
+			'show_none'          => __( 'Filter by group&hellip;', 'bp-group-user-management' ),
 			'show_without_group' => true,
 			'show_member_count'  => true
 		); ?>
@@ -378,12 +378,12 @@ class BP_Group_User_Management {
 			
 			<span class="sticky-checkbox-right">
 				<label class="screen-reader-text" for="bp-group-user-filter-hierarchy"><?php _e( 'Include hierarchy', 'bp-group-user-management' ) ?></label>
-				<input id="bp-group-user-filter-hierarchy" name="bp_group_hierarchy" type="checkbox" value="1" <?php checked( isset( $_GET['bp_group_hierarchy'] ) && $_GET['bp_group_hierarchy'] ); ?> title="<?php esc_attr_e('Include hierarchy', 'bp-group-user-management'); ?>" />
+				<input id="bp-group-user-filter-hierarchy" name="bp_group_hierarchy" type="checkbox" value="1" <?php checked( isset( $_GET['bp_group_hierarchy'] ) && $_GET['bp_group_hierarchy'] ); ?> title="<?php esc_attr_e( 'Include hierarchy', 'bp-group-user-management' ); ?>" />
 			</span>
 			
 			<?php endif; ?>
 
-			<?php submit_button( __('Filter', 'bp-group-user-management'), 'secondary', '', false, array( 'id' => 'changeit' ) ); ?>
+			<?php submit_button( __( 'Filter', 'bp-group-user-management' ), 'secondary', '', false, array( 'id' => 'changeit' ) ); ?>
 
 		</p>
 
@@ -512,7 +512,7 @@ class BP_Group_User_Management {
 				foreach ( $dom->getElementsByTagName( 'a' ) as $a ) {
 
 					// Replace href attribute
-					$a->setAttribute('href', add_query_arg( $params, $a->getAttribute( 'href' ) ) );
+					$a->setAttribute( 'href', add_query_arg( $params, $a->getAttribute( 'href' ) ) );
 				}
 
 				// Save new link
@@ -585,7 +585,7 @@ class BP_Group_User_Management {
 
 		// Show group column if user is capable
 		if ( current_user_can( 'bp_moderate' ) ) { // view?
-			$columns['bp_groups'] = __('Groups', 'buddypress');			
+			$columns['bp_groups'] = __( 'Groups', 'buddypress' );			
 		}
 
 		return $columns;
@@ -617,17 +617,17 @@ class BP_Group_User_Management {
 
 			// User has groups
 			if ( bp_has_groups( array( 'user_id' => $user_id ) ) ) : 
+				$groups = array();
 
 				while ( bp_groups() ) : bp_the_group();
 
-					// Display group name wit link to edit group page
-					$content .= '<a href="users.php?group_id=' . bp_get_group_id() . '" title="' . sprintf( esc_attr__('View all %d members of %s', 'bp-group-user-management'), bp_get_group_total_members(), bp_get_group_name() ) . '">' . bp_get_group_name() . '</a>';
-
-					// This is not the last group
-					if ( $groups_template->group_count - 1 != $groups_template->current_group ) 
-						$content .= ', ';
+					// Display group name wit link to group members user list page
+					$groups[] = '<a href="users.php?bp_group_id=' . bp_get_group_id() . '" title="' . sprintf( esc_attr__( 'View all %d members of %s', 'bp-group-user-management' ), bp_get_group_total_members(), bp_get_group_name() ) . '">' . bp_get_group_name() . '</a>';
 
 				endwhile;
+
+				// Append to the content
+				$content .= implode( ', ', $groups );
 
 			// User has no groups
 			else :
@@ -696,7 +696,7 @@ class BP_Group_User_Management {
 		$wp_admin_bar->add_node( array(
 			'parent' => 'new-content', // Add to new-content menu node
 			'id'     => 'new-bp_group',
-			'title'  => __('Group', 'buddypress'),
+			'title'  => __( 'Group', 'buddypress' ),
 			'href'   => $href
 		) );
 	}
