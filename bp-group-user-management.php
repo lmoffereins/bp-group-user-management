@@ -13,7 +13,7 @@
  * Description:       Integrate BuddyPress group member management with WordPress user management.
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins
- * Version:           0.0.2
+ * Version:           0.0.3
  * Text Domain:       bp-group-user-management
  * Domain Path:       /languages/
  * GitHub Plugin URI: lmoffereins/bp-group-user-management
@@ -67,7 +67,7 @@ class BP_Group_User_Management {
 
 		/** Version **************************************************/
 
-		$this->version      = '0.0.2';
+		$this->version      = '0.0.3';
 
 		/** Plugin ***************************************************/
 
