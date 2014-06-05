@@ -36,20 +36,22 @@ class BPGUM_Organizer {
 	 * @since 0.0.1
 	 */
 	public function print_styles() {
-		?>
-<style type="text/css">
-	.menu-item-handle .item-title {
-		padding-left: 25px;
-	}
+	?>
+		
+		<style type="text/css">
+			.menu-item-handle .item-title {
+				padding-left: 25px;
+			}
 
-	.menu-item-handle .item-title .avatar {
-		position: absolute;
-		left: 0;
-		top: 0;
-		margin: 5px;
-	}
-</style>
-		<?php
+			.menu-item-handle .item-title .avatar {
+				position: absolute;
+				left: 0;
+				top: 0;
+				margin: 5px;
+			}
+		</style>
+		
+	<?php
 	}
 
 	/**
