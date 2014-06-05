@@ -151,7 +151,7 @@ class BP_Group_User_Management {
 		/** Profile **************************************************/
 
 		// User Profile screen
-		add_action( 'edit_user_profile',              array( $this, 'profile_edit_membership'     )        );
+		// add_action( 'edit_user_profile',              array( $this, 'profile_edit_membership'     )        );
 
 		/** Misc *****************************************************/
 
