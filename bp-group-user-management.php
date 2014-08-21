@@ -137,7 +137,7 @@ class BP_Group_User_Management {
 		add_action( 'admin_print_styles-users.php', array( $this, 'users_print_styles' ) );
 
 		add_filter( 'manage_users_columns',         array( $this, 'users_add_group_column'    )        );
-		add_filter( 'manage_users_custom_column',   array( $this, 'users_custom_group_column' ), 10, 3 );
+		add_filter( 'manage_users_custom_column',   array( $this, 'users_custom_group_column' ), 20, 3 );
 
 		/** Profile **************************************************/
 
@@ -636,7 +636,6 @@ class BP_Group_User_Management {
 	 * @return string $content HTML output
 	 */
 	public function users_custom_group_column( $content, $column, $user_id ) {
-		global $groups_template;
 
 		// When in groups column
 		if ( 'bp_groups' == $column ) {
@@ -647,8 +646,16 @@ class BP_Group_User_Management {
 
 				while ( bp_groups() ) : bp_the_group();
 
-					// Display group name wit link to group members user list page
-					$groups[] = '<a href="users.php?bp_group_id=' . bp_get_group_id() . '" title="' . sprintf( esc_attr__( 'View all %d members of %s', 'bp-group-user-management' ), bp_get_group_total_members(), bp_get_group_name() ) . '">' . bp_get_group_name() . '</a>';
+					// Display group name with link to group's members user list page
+					if ( ! isset( $_GET['bp_group_id'] ) || bp_get_group_id() != $_GET['bp_group_id'] ) {
+						$text = '<a href="users.php?bp_group_id=' . bp_get_group_id() . '" title="' . sprintf( esc_attr__( 'View all %d members of %s', 'bp-group-user-management' ), bp_get_group_total_members(), bp_get_group_name() ) . '">' . bp_get_group_name() . '</a>';
+
+					// Viewing this group's members, so show no link
+					} else {
+						$text = bp_get_group_name();
+					}
+
+					$groups[] = $text;
 
 				endwhile;
 
