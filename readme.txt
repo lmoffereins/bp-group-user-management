@@ -1,7 +1,7 @@
 === BP Group User Management ===
 Contributors: Offereins
 Tags: buddypress, groups, member, user, management
-Requires at least: 3.8
+Requires at least: 3.8, BP 2.0
 Tested up to: 3.9, BP 2.0
 Stable tag: 0.0.3
 License: GPLv2 or later
@@ -15,6 +15,8 @@ Manage BuddyPress group members within the WordPress User Management screen:
 * Filter users by groups
 * Add users to groups
 * Remove users from groups
+
+Requires at least BP 2.0.
 
 Also adds additional group management functionalities:
 * Group creation shortcut in Add New admin menu
@@ -30,6 +32,9 @@ Supports the following BuddyPress group plugins:
 3. Visit the User Management screen to manage BuddyPress group members.
 
 == Changelog ==
+
+= 0.0.4 =
+* Remove search unblocking logic. Require now at least BP 2.0
 
 = 0.0.3 =
 * Fix group member user list links

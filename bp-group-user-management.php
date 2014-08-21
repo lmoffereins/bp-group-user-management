@@ -87,11 +87,6 @@ class BP_Group_User_Management {
 
 		$this->bp_group_hierarchy = defined( 'BP_GROUP_HIERARCHY_VERSION' );
 		$this->bp_group_organizer = function_exists( 'bp_group_organizer_admin' );
-
-		/** Flags ****************************************************/
-
-		// For BP pre-2.0
-		$this->unblock_search     = false;
 	}
 
 	/**
@@ -128,38 +123,35 @@ class BP_Group_User_Management {
 		/** Query ****************************************************/
 
 		// User Queries
-		add_action( 'pre_user_query',                 array( $this, 'user_group_query'            )        );
+		add_action( 'pre_user_query', array( $this, 'user_group_query' ) );
 
 		/** Management ***********************************************/
 
 		// User Management screen
-		add_action( 'restrict_manage_users',          array( $this, 'users_bulk_group_members'    )        );
-		add_action( 'load-users.php',                 array( $this, 'users_group_bulk_change'     )        );
+		add_action( 'restrict_manage_users', array( $this, 'users_bulk_group_members' ) );
+		add_action( 'load-users.php',        array( $this, 'users_group_bulk_change'  ) );
 
-		add_action( 'restrict_manage_users',          array( $this, 'users_filter_by_group'       )        );
-		add_filter( 'views_users',                    array( $this, 'users_filter_role_views'     )        );
+		add_action( 'restrict_manage_users', array( $this, 'users_filter_by_group'    ) );
+		add_filter( 'views_users',           array( $this, 'users_filter_role_views'  ) );
 
-		add_action( 'admin_print_styles-users.php',   array( $this, 'users_print_styles'          )        );
+		add_action( 'admin_print_styles-users.php', array( $this, 'users_print_styles' ) );
 
-		add_filter( 'manage_users_columns',           array( $this, 'users_add_group_column'      )        );
-		add_filter( 'manage_users_custom_column',     array( $this, 'users_custom_group_column'   ), 10, 3 );
-
-		// Group Queries
-		add_filter( 'bp_groups_get_paged_groups_sql', array( $this, 'groups_query_unblock_search' ), 10, 3 );
+		add_filter( 'manage_users_columns',         array( $this, 'users_add_group_column'    )        );
+		add_filter( 'manage_users_custom_column',   array( $this, 'users_custom_group_column' ), 10, 3 );
 
 		/** Profile **************************************************/
 
 		// User Profile screen
-		// add_action( 'edit_user_profile',              array( $this, 'profile_edit_membership'     )        );
+		// add_action( 'edit_user_profile', array( $this, 'profile_edit_membership' ) );
 
 		/** Misc *****************************************************/
 
 		// Dropdown
-		add_filter( 'bp_groups_get_dropdown',         array( $this, 'dropdown_show_without_group' ), 10, 2 );
-		add_filter( 'bp_walker_dropdown_group_title', array( $this, 'dropdown_show_member_count'  ), 10, 5 );
+		add_filter( 'bp_groups_get_dropdown',         array( $this, 'dropdown_without_group_option' ), 10, 2 );
+		add_filter( 'bp_walker_dropdown_group_title', array( $this, 'dropdown_show_member_count'    ), 10, 5 );
 
 		// Admin Bar
-		add_action( 'admin_bar_menu',                 array( $this, 'admin_bar_menu'              ), 90    );
+		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 90 );
 	}
 
 	/** Query ********************************************************/
@@ -250,13 +242,7 @@ class BP_Group_User_Management {
 
 		wp_nonce_field( 'bulk-bp-groups' );
 
-		/**
-		 * BP pre-2.0 solution to override group query search params
-		 * @see BP_Group_User_Management::groups_query_unblock_search()
-		 */
-		$this->unblock_search = true;
-
-		// Setup dropdown args
+		// Setup join-to dropdown args
 		$args = array(
 			'select_id' => 'join_group',
 			'show_none' => __( 'Add to group&hellip;', 'bp-group-user-management' )
@@ -265,13 +251,7 @@ class BP_Group_User_Management {
 		<label class="screen-reader-text" for="join_group"><?php _e( 'Add to group&hellip;', 'bp-group-user-management' ); ?></label>
 		<?php bp_groups_dropdown( $args );
 
-		/**
-		 * BP pre-2.0 solution to override group query search params
-		 * @see BP_Group_User_Management::groups_query_unblock_search()
-		 */
-		$this->unblock_search = true;
-
-		// Setup dropdown args
+		// Setup remove-from dropdown args
 		$args = array(
 			'select_id' => 'leave_group',
 			'show_none' => __( 'Remove from group&hellip;', 'bp-group-user-management' )
@@ -408,12 +388,6 @@ class BP_Group_User_Management {
 		if ( ! current_user_can( 'bp_moderate' ) )
 			return;
 
-		/**
-		 * BP pre-2.0 solution to override group query search params
-		 * @see BP_Group_User_Management::groups_query_unblock_search()
-		 */
-		$this->unblock_search = true;
-
 		// Setup dropdown args
 		$args = array(
 			'selected'           => isset( $_GET['bp_group_id'] ) ? $_GET['bp_group_id'] : false,
@@ -452,7 +426,7 @@ class BP_Group_User_Management {
 	 * @param array $args Dropdown arguments
 	 * @return string HTML element
 	 */
-	public function dropdown_show_without_group( $dropdown, $args ) {
+	public function dropdown_without_group_option( $dropdown, $args ) {
 
 		// Display a second 'without-value' option, with or without custom text
 		if ( ! isset( $args['show_without_group'] ) || empty( $args['show_without_group'] ) )
@@ -667,12 +641,6 @@ class BP_Group_User_Management {
 		// When in groups column
 		if ( 'bp_groups' == $column ) {
 
-			/**
-			 * BP pre-2.0 solution to override group query search params
-			 * @see BP_Group_User_Management::groups_query_unblock_search()
-			 */
-			$this->unblock_search = true;
-
 			// User has groups
 			if ( bp_has_groups( array( 'user_id' => $user_id ) ) ) {
 				$groups = array();
@@ -696,38 +664,6 @@ class BP_Group_User_Management {
 		return $content;
 	}
 
-	/** Group Queries ************************************************/
-
-	/**
-	 * Unset search query parameter when not searching for groups (BP pre-2.0)
-	 *
-	 * @link https://buddypress.trac.wordpress.org/ticket/5456
-	 *
-	 * @since 0.0.1
-	 *
-	 * @param  string $query
-	 * @param  array $sql
-	 * @param  array $args
-	 * @return string Query
-	 */
-	public function groups_query_unblock_search( $query, $sql, $args ) {
-
-		// Is unblock_search var true?
-		if ( $this->unblock_search ) {
-
-			// Empty search statement
-			$sql['search'] = '';
-
-			// Rebuild query
-			$query = join( ' ', (array) $sql );
-
-			// Reset unblock_search var
-			$this->unblock_search = false;
-		}
-
-		return $query;
-	}
-
 	/** Admin Bar ****************************************************/
 
 	/**
@@ -743,7 +679,7 @@ class BP_Group_User_Management {
 		if ( ! bp_user_can_create_groups() )
 			return;
 
-		// Set node href
+		// Set node target uri
 		if ( $this->bp_group_organizer && current_user_can( 'bp_moderate' ) ) {
 			$href = add_query_arg( 'page', 'group_organizer', admin_url( 'admin.php' ) );
 		} else {
