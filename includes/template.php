@@ -28,17 +28,17 @@ function bp_groups_dropdown( $args = '' ) {
 	 * @since 0.0.1
 	 *
 	 * @param mixed $args The function supports these args:
-	 *  - selected: Selected ID or array of selected IDs, to not have any 
-	 *               value as selected, pass anything smaller than 0 (due 
-	 *               to the nature of select box, the first value would of 
-	 *               course be selected - though you can have that as none 
+	 *  - selected: Selected ID or array of selected IDs, to not have any
+	 *               value as selected, pass anything smaller than 0 (due
+	 *               to the nature of select box, the first value would of
+	 *               course be selected - though you can have that as none
 	 *               (pass 'show_none' arg))
 	 *  - orderby: Defaults to 'name'
 	 *  - order: Defaults to 'ASC'
-	 *  - type: Shorthand for orderby and order arg, which overrides them. 
+	 *  - type: Shorthand for orderby and order arg, which overrides them.
 	 *           Defaults to 'alphabetical'
 	 *  - parent_id: Group parent when using BP Group Hierarchy. Defaults to 0
-	 *  - visibility: Which all visibility to find in? Can be an array or 
+	 *  - visibility: Which all visibility to find in? Can be an array or
 	 *                 CSV of publish, private, hidden - if not set, all
 	 *                 will be selected
 	 *  - posts_per_page: Retrieve all groups. Defaults to -1 to get all groups
@@ -66,10 +66,10 @@ function bp_groups_dropdown( $args = '' ) {
 		 * Parse arguments against default values
 		 *
 		 * bp_parse_args() is only available since BP 2.0 see #BP5306
-		 * https://buddypress.trac.wordpress.org/ticket/5306 
+		 * https://buddypress.trac.wordpress.org/ticket/5306
 		 */
-		$r = wp_parse_args( $args, array( 
-			'parent_id'          => null,
+		$r = bp_parse_args( $args, array(
+			'parent_id'          => 0,
 			'visibility'         => null,
 			'selected'           => 0,
 			'exclude'            => array(),
@@ -87,7 +87,7 @@ function bp_groups_dropdown( $args = '' ) {
 			'show_without_group' => false,
 			'disabled'           => '',
 			'multiple'           => ''
-		), 'get_dropdown' );
+		), 'groups_get_dropdown' );
 
 		if ( empty( $r['walker'] ) ) {
 			$r['walker'] = new BP_Group_Dropdown();
@@ -123,6 +123,12 @@ function bp_groups_dropdown( $args = '' ) {
 			'walker'             => $r['walker'],
 		) );
 		$groups = $groups['groups'];
+
+		// Ensure groups have a parent_id
+		foreach ( $groups as $group ) {
+			if ( ! isset( $group->parent_id ) )
+				$group->parent_id = 0;
+		}
 
 		/** Drop Down *********************************************************/
 
