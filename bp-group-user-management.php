@@ -48,7 +48,7 @@ class BP_Group_User_Management {
 
 		// Only run these methods if they haven't been ran previously
 		if ( null === $instance ) {
-			$instance = new BP_Group_User_Management;		
+			$instance = new BP_Group_User_Management;
 			$instance->setup_globals();
 			$instance->includes();
 			$instance->setup_actions();
@@ -102,16 +102,16 @@ class BP_Group_User_Management {
 	private function includes() {
 
 		/** Template *************************************************/
-		
+
 		require( $this->includes_dir . 'template.php' );
 
 		/** Extend ***************************************************/
-		
+
 		// BP Group Hierarchy
 		if ( $this->bp_group_hierarchy ) {
 			require( $this->includes_dir . 'extend/bp-group-hierarchy.php' );
 		}
-		
+
 		// BP Group Organizer
 		if ( $this->bp_group_organizer ) {
 			require( $this->includes_dir . 'extend/bp-group-organizer.php' );
@@ -133,8 +133,7 @@ class BP_Group_User_Management {
 		/** Management ***********************************************/
 
 		// User Management screen
-		add_action( 'restrict_manage_users',          array( $this, 'users_add_to_group'          )        );
-		add_action( 'restrict_manage_users',          array( $this, 'users_remove_from_group'     )        );
+		add_action( 'restrict_manage_users',          array( $this, 'users_bulk_group_members'    )        );
 		add_action( 'load-users.php',                 array( $this, 'users_group_bulk_change'     )        );
 
 		add_action( 'restrict_manage_users',          array( $this, 'users_filter_by_group'       )        );
@@ -177,7 +176,7 @@ class BP_Group_User_Management {
 	 * @since 0.0.1
 	 *
 	 * @uses BP_Groups_Hierarchy::has_children()
-	 * 
+	 *
 	 * @param WP_User_Query $query
 	 */
 	public function user_group_query( $query ) {
@@ -203,7 +202,7 @@ class BP_Group_User_Management {
 			$group_ids = array( $group_id );
 
 			// Add users from group hierarchy
-			if ( $this->bp_group_hierarchy && ( 
+			if ( $this->bp_group_hierarchy && (
 					   ( isset( $qv['bp_group_hierarchy']       ) && $qv['bp_group_hierarchy']       )
 					|| ( isset( $_REQUEST['bp_group_hierarchy'] ) && $_REQUEST['bp_group_hierarchy'] )
 				) ) {
@@ -225,7 +224,7 @@ class BP_Group_User_Management {
 
 			// Append sql to query WHERE clause
 			$query->query_where .= sprintf( " AND $wpdb->users.ID IN ( SELECT user_id FROM {$bp->groups->table_name_members} WHERE group_id IN (%s) )", implode( ',', array_unique( $group_ids ) ) );
-		
+
 		// Query users not in any group
 		} else {
 
@@ -243,11 +242,13 @@ class BP_Group_User_Management {
 	 *
 	 * @uses bp_groups_dropdown()
 	 */
-	public function users_add_to_group() {
+	public function users_bulk_group_members() {
 
 		// Bail if user can not moderate groups
 		if ( ! current_user_can( 'bp_moderate' ) )
 			return;
+
+		wp_nonce_field( 'bulk-bp-groups' );
 
 		/**
 		 * BP pre-2.0 solution to override group query search params
@@ -262,21 +263,7 @@ class BP_Group_User_Management {
 		); ?>
 
 		<label class="screen-reader-text" for="join_group"><?php _e( 'Add to group&hellip;', 'bp-group-user-management' ); ?></label>
-		<?php bp_groups_dropdown( $args ); 
-	}
-
-	/**
-	 * Output the remove users from group dropdown
-	 *
-	 * @since 0.0.1
-	 *
-	 * @uses bp_groups_dropdown()
-	 */
-	public function users_remove_from_group() {
-
-		// Bail if user can not moderate groups
-		if ( ! current_user_can( 'bp_moderate' ) )
-			return;
+		<?php bp_groups_dropdown( $args );
 
 		/**
 		 * BP pre-2.0 solution to override group query search params
@@ -291,7 +278,7 @@ class BP_Group_User_Management {
 		); ?>
 
 		<label class="screen-reader-text" for="leave_group"><?php _e( 'Remove from group&hellip;', 'bp-group-user-management' ); ?></label>
-		<?php bp_groups_dropdown( $args ); 
+		<?php bp_groups_dropdown( $args );
 	}
 
 	/**
@@ -299,7 +286,7 @@ class BP_Group_User_Management {
 	 * Table
 	 *
 	 * The BP groups join and leave functions have their own internal checks.
-	 * 
+	 *
 	 * @since 0.0.1
 	 *
 	 * @todo redirect to current page (search/paging)
@@ -309,24 +296,45 @@ class BP_Group_User_Management {
 	 * @uses call_user_func_array() To call 'groups_join_group' and 'groups_leave_group'
 	 */
 	public function users_group_bulk_change() {
+		global $parent_file, $pagenum;
 
 		// Bail if user can not moderate groups
 		if ( ! current_user_can( 'bp_moderate' ) )
 			return;
 
-		// Bail if no users specified
-		if ( empty( $_REQUEST['users'] ) )
-			return;
-
 		// Fetch actions
-		$actions = array_filter( array( 
+		$actions = array_filter( array(
 			'join'  => (int) $_REQUEST['join_group'],
 			'leave' => (int) $_REQUEST['leave_group']
 		) );
 
-		// Bail if this isn't one of our actions or selected groups are the same
-		if ( empty( $actions ) || $actions != array_unique( $actions ) )
-			return;
+		// Bail if this isn't one of our actions or selected groups are the same (identical array values)
+		if ( empty( $actions ) || $actions != array_unique( $actions ) ) {
+			if ( ! empty( $_REQUEST['_wp_http_referer'] ) ) {
+				wp_redirect( remove_query_arg( array('_wp_http_referer', '_wpnonce'), wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+				exit;
+			} else {
+				return;
+			}
+		}
+
+		// Check referer
+		check_admin_referer( 'bulk-bp-groups' );
+
+		// Setup correct sendback uri
+		$sendback = remove_query_arg( array( 'join_group', 'leave_group', 'join', 'leave' ), wp_get_referer() );
+		if ( ! $sendback )
+			$sendback = admin_url( $parent_file );
+		$sendback = add_query_arg( 'paged', $pagenum, $sendback );
+
+		// No users selected, so redirect
+		if ( empty( $_REQUEST['users'] ) ) {
+			wp_redirect( $sendback );
+			exit;
+		}
+
+		// Setup return vars
+		$message = array( 'join' => 0, 'leave' => 0 );
 
 		// Run through user ids
 		foreach ( (array) $_REQUEST['users'] as $user_id ) {
@@ -336,8 +344,53 @@ class BP_Group_User_Management {
 			foreach ( $actions as $action => $group_id ) {
 
 				// Run action callback
-				call_user_func_array( "groups_{$action}_group", array( $group_id, $user_id ) );
+				if ( ! call_user_func_array( "groups_{$action}_group", array( $group_id, $user_id ) ) )
+					wp_die( __( 'Error in group management.', 'bp-group-user-management' ) );
+
+				$message[$action]++;
 			}
+		}
+
+		// Sanitize redirect url
+		$sendback = remove_query_arg( array( 'action', 'action2', 'changeit', 'users' ), $sendback );
+
+		wp_redirect( add_query_arg( array_filter( $message ), $sendback ) );
+		exit;
+	}
+
+	/**
+	 * Bulk group member management notices
+	 *
+	 * @since 0.0.4
+	 */
+	public function users_group_bulk_notice() {
+
+		// Bail if not on users screen
+		if ( ! isset( get_current_screen()->id ) || 'users.php' != get_current_screen()->id )
+			return;
+
+		// If joined or left
+		if ( 'GET' == $_SERVER['REQUEST_METHOD'] && ( ! empty( $_GET['join'] ) || ! empty( $_GET['leave'] ) ) ) {
+			$messages = array();
+
+			// Joined
+			if ( ! empty( $_GET['join'] ) ) {
+				$messages[] = sprintf( __( 'Successfully added %d users to group %s.', 'bp-group-user-management' ), $_GET['join'], groups_get_group( array( 'group_id' => $_GET['join_group'] ) )->name );
+			}
+
+			// Left
+			if ( ! empty( $_GET['leave'] ) ) {
+				$messages[] = sprintf( __( 'Successfully removed %d users from group %s.', 'bp-group-user-management' ), $_GET['join'], groups_get_group( array( 'group_id' => $_GET['leave_group'] ) )->name );
+			}
+
+			// Walk messages
+			foreach ( $messages as $message ) : ?>
+
+			<div id="message" class="updated fade">
+				<p style="line-height: 150%"><?php echo $message; ?></p>
+			</div>
+
+			<?php endforeach;
 		}
 	}
 
@@ -375,12 +428,12 @@ class BP_Group_User_Management {
 			<?php bp_groups_dropdown( $args ); ?>
 
 			<?php if ( $this->bp_group_hierarchy ) : ?>
-			
+
 			<span class="sticky-checkbox-right">
 				<label class="screen-reader-text" for="bp-group-user-filter-hierarchy"><?php _e( 'Include hierarchy', 'bp-group-user-management' ) ?></label>
 				<input id="bp-group-user-filter-hierarchy" name="bp_group_hierarchy" type="checkbox" value="1" <?php checked( isset( $_GET['bp_group_hierarchy'] ) && $_GET['bp_group_hierarchy'] ); ?> title="<?php esc_attr_e( 'Include hierarchy', 'bp-group-user-management' ); ?>" />
 			</span>
-			
+
 			<?php endif; ?>
 
 			<?php submit_button( __( 'Filter', 'bp-group-user-management' ), 'secondary', '', false, array( 'id' => 'changeit' ) ); ?>
@@ -394,7 +447,7 @@ class BP_Group_User_Management {
 	 * Display a 'without-group' dropdown option, with or without custom text
 	 *
 	 * @since 0.0.1
-	 * 
+	 *
 	 * @param string $dropdown HTML element
 	 * @param array $args Dropdown arguments
 	 * @return string HTML element
@@ -411,8 +464,8 @@ class BP_Group_User_Management {
 		$pos = 0;
 
 		// Setup walker title filter group argument
-		$group = array( 
-			'id'           => -1, 
+		$group = array(
+			'id'           => -1,
 			'creator_id'   => 0,
 			'name'         => esc_html__( 'Without group', 'bp-group-user-management' ),
 			'slug'         => '',
@@ -451,7 +504,7 @@ class BP_Group_User_Management {
 	 * Display the member count per group in the dropdown
 	 *
 	 * @since 0.0.1
-	 * 
+	 *
 	 * @param string $title Group dropdown title value
 	 * @param string $output HTML select element
 	 * @param object $group Current group object data
@@ -488,7 +541,7 @@ class BP_Group_User_Management {
 	 * @since 0.0.1
 	 *
 	 * @uses DomDocument
-	 * 
+	 *
 	 * @param array $views Role views
 	 * @return array Views
 	 */
@@ -520,7 +573,7 @@ class BP_Group_User_Management {
 
 				// Save new link
 				$views[$role] = $dom->saveHTML();
-			}			
+			}
 		}
 
 		return $views;
@@ -532,55 +585,57 @@ class BP_Group_User_Management {
 	 * @since 0.0.1
 	 */
 	public function users_print_styles() {
-		?>
-<style type="text/css">
-	.bp-filter-by-group-box {
-		display: inline-block;
-		margin: 0;
-	}
+	?>
 
-<?php if ( $this->bp_group_hierarchy ) : ?>
-	#bp_group_id {
-		margin-right: 0;
-	}
-<?php endif; ?>
+		<style type="text/css">
+			.bp-filter-by-group-box {
+				display: inline-block;
+				margin: 0;
+			}
 
-	p select + .sticky-checkbox-right {
-		float: left;
-		background: #fff;
-		border: 1px solid #ddd;
-		border-left: 0;
-		padding: 5px;
-		margin: 1px 6px 1px 0;
-	}
+		<?php if ( $this->bp_group_hierarchy ) : ?>
+			#bp_group_id {
+				margin-right: 0;
+			}
+		<?php endif; ?>
 
-		p select:focus + .sticky-checkbox-right {
-			border-color: #999;
-		}
+			p select + .sticky-checkbox-right {
+				float: left;
+				background: #fff;
+				border: 1px solid #ddd;
+				border-left: 0;
+				padding: 5px;
+				margin: 1px 6px 1px 0;
+			}
 
-	p select + .sticky-checkbox-right input[type=checkbox] {
-		float: left;
-		margin: 0;
-	}
+				p select:focus + .sticky-checkbox-right {
+					border-color: #999;
+				}
 
-	#changeit {
-		margin-right: 16px;
-	}
+			p select + .sticky-checkbox-right input[type=checkbox] {
+				float: left;
+				margin: 0;
+			}
 
-		#changeit:last-child {
-			margin-right: 8px;
-		}
-</style>
-		<?php
+			#changeit {
+				margin-right: 16px;
+			}
+
+				#changeit:last-child {
+					margin-right: 8px;
+				}
+		</style>
+
+	<?php
 	}
 
 	/**
 	 * Add group column to user management panel
 	 *
 	 * @since 0.0.1
-	 * 
+	 *
 	 * @uses current_user_can()
-	 * 
+	 *
 	 * @param array $columns
 	 * @return array $columns
 	 */
@@ -588,7 +643,7 @@ class BP_Group_User_Management {
 
 		// Show group column if user is capable
 		if ( current_user_can( 'bp_moderate' ) ) { // view?
-			$columns['bp_groups'] = __( 'Groups', 'buddypress' );			
+			$columns['bp_groups'] = __( 'Groups', 'buddypress' );
 		}
 
 		return $columns;
@@ -596,11 +651,11 @@ class BP_Group_User_Management {
 
 	/**
 	 * Return group column content on user management panel
-	 * 
+	 *
 	 * @since 0.0.1
-	 * 
+	 *
 	 * @uses groups_total_groups_for_user()
-	 * 
+	 *
 	 * @param string $content
 	 * @param string $column Column ID
 	 * @param int $user_id User ID
@@ -619,7 +674,7 @@ class BP_Group_User_Management {
 			$this->unblock_search = true;
 
 			// User has groups
-			if ( bp_has_groups( array( 'user_id' => $user_id ) ) ) : 
+			if ( bp_has_groups( array( 'user_id' => $user_id ) ) ) {
 				$groups = array();
 
 				while ( bp_groups() ) : bp_the_group();
@@ -630,12 +685,12 @@ class BP_Group_User_Management {
 				endwhile;
 
 				// Append to the content
-				$content .= implode( ', ', $groups );
+				$content = implode( ', ', $groups );
 
 			// User has no groups
-			else :
-				$content = '&#8212;';
-			endif;
+			} else {
+				// Do nothing
+			}
 		}
 
 		return $content;
@@ -645,11 +700,11 @@ class BP_Group_User_Management {
 
 	/**
 	 * Unset search query parameter when not searching for groups (BP pre-2.0)
-	 * 
+	 *
 	 * @link https://buddypress.trac.wordpress.org/ticket/5456
 	 *
 	 * @since 0.0.1
-	 * 
+	 *
 	 * @param  string $query
 	 * @param  array $sql
 	 * @param  array $args
@@ -679,7 +734,7 @@ class BP_Group_User_Management {
 	 * Add new group link to the Create New admin bar menu
 	 *
 	 * @since 0.0.1
-	 * 
+	 *
 	 * @param object $wp_admin_bar
 	 */
 	public function admin_bar_menu( $wp_admin_bar ) {

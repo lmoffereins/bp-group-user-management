@@ -244,22 +244,3 @@ class BP_Group_Dropdown extends Walker {
 
 }
 endif;
-
-if ( ! function_exists( 'bp_get_users_without_group_total' ) ) :
-/**
- * Return the count of users without groups
- *
- * @since 0.0.1
- *
- * @return int User count
- */
-function bp_get_users_without_group_total() {
-	global $wpdb;
-
-	$bp = buddypress();
-	$total = $wpdb->get_var( "SELECT COUNT(ID) FROM $wpdb->users WHERE $wpdb->users.ID NOT IN ( SELECT user_id FROM {$bp->groups->table_name_members} )" );
-
-	return (int) apply_filters( 'bp_get_users_without_group_total', $total );
-}
-endif;
-
