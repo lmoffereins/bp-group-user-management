@@ -521,8 +521,8 @@ class BP_Group_User_Management {
 	 */
 	public function users_filter_role_views( $views ) {
 
-		// Only if there's a group id param
-		if ( isset( $_GET['bp_group_id'] ) ) {
+		// Only if there's a valid group id param
+		if ( isset( $_GET['bp_group_id'] ) && $_GET['bp_group_id'] ) {
 
 			// Setup local vars
 			$dom    = new DomDocument();
@@ -719,6 +719,6 @@ function bp_group_user_management() {
 }
 
 // Fire on bp_include
-add_action( 'bp_include', 'bp_group_user_management' );
+add_action( 'bp_loaded', 'bp_group_user_management' );
 
 endif;
