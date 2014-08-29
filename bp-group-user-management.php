@@ -641,7 +641,7 @@ class BP_Group_User_Management {
 		if ( 'bp_groups' == $column ) {
 
 			// User has groups
-			if ( bp_has_groups( array( 'user_id' => $user_id ) ) ) {
+			if ( bp_has_groups( array( 'user_id' => $user_id, 'search_terms' => false ) ) ) {
 				$groups = array();
 
 				while ( bp_groups() ) : bp_the_group();
