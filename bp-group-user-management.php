@@ -284,8 +284,8 @@ class BP_Group_User_Management {
 
 		// Fetch actions
 		$actions = array_filter( array(
-			'join'  => (int) $_REQUEST['join_group'],
-			'leave' => (int) $_REQUEST['leave_group']
+			'join'  => isset( $_REQUEST['join_group']  ) ? (int) $_REQUEST['join_group']  : false,
+			'leave' => isset( $_REQUEST['leave_group'] ) ? (int) $_REQUEST['leave_group'] : false
 		) );
 
 		// Bail if this isn't one of our actions or selected groups are the same (identical array values)
