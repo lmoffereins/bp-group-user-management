@@ -374,12 +374,12 @@ final class BP_Group_User_Management {
 
 			// Joined
 			if ( ! empty( $_REQUEST['joined'] ) ) {
-				$messages[] = sprintf( _n( 'User added to the group &#8220;%1$s&#8221;.', '%2$d users added to the group &#8220;%1$s&#8221;.', (int) $_REQUEST['joined'], 'bp-group-user-management' ), groups_get_group( array( 'group_id' => $_REQUEST['join_group'] ) )->name, (int) $_REQUEST['joined'] );
+				$messages[] = sprintf( _n( 'User added to the &#8220;%1$s&#8221; group.', '%2$d users added to the &#8220;%1$s&#8221; group.', (int) $_REQUEST['joined'], 'bp-group-user-management' ), groups_get_group( array( 'group_id' => $_REQUEST['join_group'] ) )->name, (int) $_REQUEST['joined'] );
 			}
 
 			// Removed
 			if ( ! empty( $_REQUEST['removed'] ) ) {
-				$messages[] = sprintf( _n( 'User removed from the group &#8220;%1$s&#8221;.', '%2$d users removed from the group &#8220;%1$s&#8221;.', (int) $_REQUEST['removed'], 'bp-group-user-management' ), groups_get_group( array( 'group_id' => $_REQUEST['leave_group'] ) )->name, (int) $_REQUEST['removed'] );
+				$messages[] = sprintf( _n( 'User removed from the &#8220;%1$s&#8221; group.', '%2$d users removed from the &#8220;%1$s&#8221; group.', (int) $_REQUEST['removed'], 'bp-group-user-management' ), groups_get_group( array( 'group_id' => $_REQUEST['leave_group'] ) )->name, (int) $_REQUEST['removed'] );
 			}
 		}
 
