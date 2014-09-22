@@ -275,18 +275,13 @@ final class BP_Group_User_Management {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @todo redirect to current page (search/paging)
-	 * @todo send user feedback message
+	 * @todo redirect to referer page (paging)
 	 *
 	 * @uses current_user_can()
-	 * @uses call_user_func_array() To call 'groups_join_group' and 'groups_leave_group'
+	 * @uses call_user_func_array() Calls 'groups_join_group' and 'groups_leave_group'
 	 */
 	public function users_group_bulk_change() {
 		global $parent_file, $pagenum;
-
-		// Bail if user can not moderate groups
-		if ( ! current_user_can( 'bp_moderate' ) )
-			return;
 
 		// Fetch actions
 		$actions = array_filter( array(
@@ -294,53 +289,63 @@ final class BP_Group_User_Management {
 			'leave' => isset( $_REQUEST['leave_group'] ) ? (int) $_REQUEST['leave_group'] : false
 		) );
 
-		// Bail if this isn't one of our actions or selected groups are the same (identical array values)
-		if ( empty( $actions ) || $actions != array_unique( $actions ) ) {
-			if ( ! empty( $_REQUEST['_wp_http_referer'] ) ) {
-				wp_redirect( remove_query_arg( array('_wp_http_referer', '_wpnonce'), wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
-				exit;
-			} else {
-				return;
-			}
-		}
-
-		// Check referer
-		check_admin_referer( 'bulk-bp-groups' );
-
 		// Setup correct sendback uri
-		$sendback = remove_query_arg( array( 'join_group', 'leave_group', 'join', 'leave' ), wp_get_referer() );
+		$sendback = remove_query_arg( array( '_bulk_bp_groups_nonce', 'join_group', 'leave_group' ), wp_unslash( $_SERVER['REQUEST_URI'] ) );
 		if ( ! $sendback )
 			$sendback = admin_url( $parent_file );
 		$sendback = add_query_arg( 'paged', $pagenum, $sendback );
 
-		// No users selected, so redirect
-		if ( empty( $_REQUEST['users'] ) ) {
-			wp_redirect( $sendback );
-			exit;
+		// Bail if...no actions were selected
+		if (   empty( $actions )
+			// ... the user cannot moderate groups
+			|| ! current_user_can( 'bp_moderate' )
+			// ... the nonce does not verify
+			|| ! isset( $_REQUEST['_bulk_bp_groups_nonce'] )
+			|| ! wp_verify_nonce( $_REQUEST['_bulk_bp_groups_nonce'], 'bulk-bp-groups' )
+			// ... selected groups are the same
+			|| $actions != array_unique( $actions )
+			// ... no users were selected
+			|| empty( $_REQUEST['users'] )
+		) {
+			if ( ! empty( $_GET['_bulk_bp_groups_nonce'] ) ) {
+				wp_redirect( $sendback );
+				exit;
+			}
+			return;
 		}
 
 		// Setup return vars
-		$message = array( 'join' => 0, 'leave' => 0 );
+		$messages = array( 'joined' => 0, 'removed' => 0 );
 
-		// Run through user ids
+		// Walk user ids
 		foreach ( (array) $_REQUEST['users'] as $user_id ) {
 			$user_id = (int) $user_id;
 
-			// Run trough actions
+			// Walk actions
 			foreach ( $actions as $action => $group_id ) {
 
-				// Run action callback
-				if ( ! call_user_func_array( "groups_{$action}_group", array( $group_id, $user_id ) ) )
-					wp_die( __( 'Error in group management.', 'bp-group-user-management' ) );
+				// Run action callback. Errors are handled by BP
+				$success = call_user_func_array( "groups_{$action}_group", array( $group_id, $user_id ) );
 
-				$message[$action]++;
+				// Increase message value
+				if ( $success ) {
+					switch ( $action ) {
+						case 'join'  : $messages['joined']++; break;
+						case 'leave' : $messages['removed']++; break;
+					}
+				}
+
+				// Send manipulated group too
+				if ( ! isset( $messages[ $action . '_group'] ) ) {
+					$messages[ $action . '_group' ] = $group_id;
+				}
 			}
 		}
 
 		// Sanitize redirect url
 		$sendback = remove_query_arg( array( 'action', 'action2', 'changeit', 'users' ), $sendback );
 
-		wp_redirect( add_query_arg( array_filter( $message ), $sendback ) );
+		wp_redirect( add_query_arg( array_filter( $messages ), $sendback ) );
 		exit;
 	}
 
