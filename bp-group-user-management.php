@@ -348,7 +348,7 @@ final class BP_Group_User_Management {
 			}
 		}
 
-		// Sanitize redirect url
+		// Sanitize redirect url: perform only one action at a time
 		$sendback = remove_query_arg( array( 'action', 'action2', 'changeit', 'users' ), $sendback );
 
 		wp_redirect( add_query_arg( array_filter( $messages ), $sendback ) );
