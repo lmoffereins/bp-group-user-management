@@ -136,6 +136,7 @@ final class BP_Group_User_Management {
 		// User Management screen
 		add_action( 'restrict_manage_users', array( $this, 'users_bulk_group_members' ) );
 		add_action( 'load-users.php',        array( $this, 'users_group_bulk_change'  ) );
+		add_action( 'admin_notices',         array( $this, 'users_group_bulk_notices' ) );
 
 		add_action( 'restrict_manage_users', array( $this, 'users_filter_by_group'    ) );
 		add_filter( 'views_users',           array( $this, 'users_filter_role_views'  ) );
@@ -350,38 +351,50 @@ final class BP_Group_User_Management {
 	}
 
 	/**
-	 * Bulk group member management notices
+	 * Output admin notices for bulk group actions
 	 *
 	 * @since 0.0.4
 	 */
-	public function users_group_bulk_notice() {
+	public function users_group_bulk_notices() {
 
 		// Bail if not on users screen
-		if ( ! isset( get_current_screen()->id ) || 'users.php' != get_current_screen()->id )
+		if ( ! isset( get_current_screen()->id ) || 'users' != get_current_screen()->id )
 			return;
 
-		// If joined or left
-		if ( 'GET' == $_SERVER['REQUEST_METHOD'] && ( ! empty( $_GET['join'] ) || ! empty( $_GET['leave'] ) ) ) {
-			$messages = array();
+		// Setup local vars
+		$messages = array();
+
+		// When users were added to or remove from groups
+		if ( isset( $_REQUEST['joined'] ) || isset( $_REQUEST['removed'] ) ) {
 
 			// Joined
-			if ( ! empty( $_GET['join'] ) ) {
-				$messages[] = sprintf( __( 'Successfully added %d users to group %s.', 'bp-group-user-management' ), $_GET['join'], groups_get_group( array( 'group_id' => $_GET['join_group'] ) )->name );
+			if ( ! empty( $_REQUEST['joined'] ) ) {
+				$messages[] = sprintf( _n( 'User added to the group &#8220;%1$s&#8221;.', '%2$d users added to the group &#8220;%1$s&#8221;.', (int) $_REQUEST['joined'], 'bp-group-user-management' ), groups_get_group( array( 'group_id' => $_REQUEST['join_group'] ) )->name, (int) $_REQUEST['joined'] );
 			}
 
-			// Left
-			if ( ! empty( $_GET['leave'] ) ) {
-				$messages[] = sprintf( __( 'Successfully removed %d users from group %s.', 'bp-group-user-management' ), $_GET['join'], groups_get_group( array( 'group_id' => $_GET['leave_group'] ) )->name );
+			// Removed
+			if ( ! empty( $_REQUEST['removed'] ) ) {
+				$messages[] = sprintf( _n( 'User removed from the group &#8220;%1$s&#8221;.', '%2$d users removed from the group &#8220;%1$s&#8221;.', (int) $_REQUEST['removed'], 'bp-group-user-management' ), groups_get_group( array( 'group_id' => $_REQUEST['leave_group'] ) )->name, (int) $_REQUEST['removed'] );
 			}
+		}
+
+		// Process BP errors
+		// @todo Coming any through? --> hook bp_core_setup_message somewhere in page load
+		if ( ! empty( buddypress()->template_message ) ) {
+			$type       = ( 'success' === $bp->template_message_type ) ? 'updated' : 'error';
+			$messages[] = apply_filters( 'bp_core_render_message_content', buddypress()->template_message, $type );
+		}
+
+		// Display messages
+		if ( ! empty( $messages ) ) {
+			$retval   = '';
 
 			// Walk messages
-			foreach ( $messages as $message ) : ?>
+			foreach ( $messages as $message ) {
+				$retval .= '<p style="line-height: 150%">' . $message . '</p>';
+			}
 
-			<div id="message" class="updated fade">
-				<p style="line-height: 150%"><?php echo $message; ?></p>
-			</div>
-
-			<?php endforeach;
+			echo '<div id="message" class="updated fade">' . $retval . '</div>';
 		}
 	}
 
