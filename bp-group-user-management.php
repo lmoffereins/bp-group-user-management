@@ -247,7 +247,7 @@ final class BP_Group_User_Management {
 		if ( ! current_user_can( 'bp_moderate' ) )
 			return;
 
-		wp_nonce_field( 'bulk-bp-groups' );
+		wp_nonce_field( 'bulk-bp-groups', '_bulk_bp_groups_nonce' );
 
 		// Setup join-to dropdown args
 		$args = array(
@@ -274,9 +274,11 @@ final class BP_Group_User_Management {
 	 *
 	 * The BP groups join and leave functions have their own internal checks.
 	 *
-	 * @since 0.0.1
+	 * As long as users cannot be bulk edited, user group management will happen
+	 * through filters. This affects the way WP redirects paged views in list
+	 * tables - on purpose. See #17685.
 	 *
-	 * @todo redirect to referer page (paging)
+	 * @since 0.0.1
 	 *
 	 * @uses current_user_can()
 	 * @uses call_user_func_array() Calls 'groups_join_group' and 'groups_leave_group'
