@@ -280,7 +280,6 @@ final class BP_Group_User_Management {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @uses current_user_can()
 	 * @uses call_user_func_array() Calls 'groups_join_group' and 'groups_leave_group'
 	 */
 	public function users_group_bulk_change() {
@@ -359,6 +358,8 @@ final class BP_Group_User_Management {
 	 * Output admin notices for bulk group actions
 	 *
 	 * @since 0.0.4
+	 *
+	 * @uses get_current_screen()
 	 */
 	public function users_group_bulk_notices() {
 
@@ -401,7 +402,6 @@ final class BP_Group_User_Management {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @uses submit_button()
 	 * @uses bp_groups_dropdown()
 	 */
 	public function users_filter_by_group() {
@@ -440,9 +440,11 @@ final class BP_Group_User_Management {
 	}
 
 	/**
-	 * Display a 'without-group' dropdown option, with or without custom text
+	 * Display a 'without-group' group dropdown filter option, with or without custom text
 	 *
 	 * @since 0.0.1
+	 *
+	 * @uses DomDocument
 	 *
 	 * @param string $dropdown HTML element
 	 * @param array $args Dropdown arguments
@@ -580,8 +582,7 @@ final class BP_Group_User_Management {
 	 *
 	 * @since 0.0.1
 	 */
-	public function users_print_styles() {
-	?>
+	public function users_print_styles() { ?>
 
 		<style type="text/css">
 			.bp-filter-by-group-box {
@@ -622,7 +623,7 @@ final class BP_Group_User_Management {
 				}
 		</style>
 
-	<?php
+		<?php
 	}
 
 	/**
@@ -700,7 +701,7 @@ final class BP_Group_User_Management {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @param object $wp_admin_bar
+	 * @param WP_Admin_Bar $wp_admin_bar
 	 */
 	public function admin_bar_menu( $wp_admin_bar ) {
 
