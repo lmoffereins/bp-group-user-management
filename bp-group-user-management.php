@@ -296,7 +296,7 @@ final class BP_Group_User_Management {
 			$sendback = admin_url( $parent_file );
 		$sendback = add_query_arg( 'paged', $pagenum, $sendback );
 
-		// Bail if...no actions were selected
+		// Bail if ... no actions were selected
 		if (   empty( $actions )
 			// ... the user cannot moderate groups
 			|| ! current_user_can( 'bp_moderate' )
@@ -308,10 +308,13 @@ final class BP_Group_User_Management {
 			// ... no users were selected
 			|| empty( $_REQUEST['users'] )
 		) {
+
+			// Redirect when the nonce was sent
 			if ( ! empty( $_GET['_bulk_bp_groups_nonce'] ) ) {
 				wp_redirect( $sendback );
 				exit;
 			}
+
 			return;
 		}
 
@@ -376,13 +379,6 @@ final class BP_Group_User_Management {
 			if ( ! empty( $_REQUEST['removed'] ) ) {
 				$messages[] = sprintf( _n( 'User removed from the group &#8220;%1$s&#8221;.', '%2$d users removed from the group &#8220;%1$s&#8221;.', (int) $_REQUEST['removed'], 'bp-group-user-management' ), groups_get_group( array( 'group_id' => $_REQUEST['leave_group'] ) )->name, (int) $_REQUEST['removed'] );
 			}
-		}
-
-		// Process BP errors
-		// @todo Coming any through? --> hook bp_core_setup_message somewhere in page load
-		if ( ! empty( buddypress()->template_message ) ) {
-			$type       = ( 'success' === $bp->template_message_type ) ? 'updated' : 'error';
-			$messages[] = apply_filters( 'bp_core_render_message_content', buddypress()->template_message, $type );
 		}
 
 		// Display messages
