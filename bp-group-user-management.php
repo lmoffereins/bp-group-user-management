@@ -28,7 +28,7 @@ if ( ! class_exists( 'BP_Group_User_Management' ) ) :
  *
  * @since 0.0.1
  */
-class BP_Group_User_Management {
+final class BP_Group_User_Management {
 
 	/**
 	 * Main plugin instance follows singleton pattern
@@ -43,10 +43,9 @@ class BP_Group_User_Management {
 	 */
 	public static function instance() {
 
-		// Store the instance locally to avoid private static replication
+		// Store the instance locally
 		static $instance = null;
 
-		// Only run these methods if they haven't been ran previously
 		if ( null === $instance ) {
 			$instance = new BP_Group_User_Management;
 			$instance->setup_globals();
@@ -57,6 +56,13 @@ class BP_Group_User_Management {
 		// Always return the instance
 		return $instance;
 	}
+
+	/**
+	 * Not to be used class constructur
+	 *
+	 * @since 1.0.0
+	 */
+	private function construct() { /* Do nothing here */ }
 
 	/**
 	 * Setup class default variables
@@ -704,21 +710,23 @@ class BP_Group_User_Management {
 }
 
 /**
- * Initialize the plugin
+ * Initialize the plugin and return the single plugin instance
  *
  * @since 0.0.1
  *
  * @uses bp_is_active() To check if groups component is active
+ * @return BP_Group_User_Management
  */
 function bp_group_user_management() {
 
-	// Only if groups are active
-	if ( bp_is_active( 'groups' ) ) {
-		return BP_Group_User_Management::instance();
-	}
+	// Bail if groups component is not active
+	if ( ! bp_is_active( 'groups' ) )
+		return;
+
+	return BP_Group_User_Management::instance();
 }
 
-// Fire on bp_include
+// Fire when BP is loaded
 add_action( 'bp_loaded', 'bp_group_user_management' );
 
 endif;
