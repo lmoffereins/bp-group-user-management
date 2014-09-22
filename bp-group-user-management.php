@@ -13,7 +13,7 @@
  * Description:       Integrate BuddyPress group member management with WordPress user management.
  * Author:            Laurens Offereins
  * Author URI:        https://github.com/lmoffereins
- * Version:           0.0.3
+ * Version:           1.0.0
  * Text Domain:       bp-group-user-management
  * Domain Path:       /languages/
  * GitHub Plugin URI: lmoffereins/bp-group-user-management
@@ -26,14 +26,14 @@ if ( ! class_exists( 'BP_Group_User_Management' ) ) :
 /**
  * Main plugin class
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 final class BP_Group_User_Management {
 
 	/**
 	 * Main plugin instance follows singleton pattern
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @uses BP_Group_User_Management::setup_globals()
 	 * @uses BP_Group_User_Management::includes()
@@ -67,13 +67,13 @@ final class BP_Group_User_Management {
 	/**
 	 * Setup class default variables
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	private function setup_globals() {
 
 		/** Version **************************************************/
 
-		$this->version      = '0.0.3';
+		$this->version      = '1.0.0';
 
 		/** Plugin ***************************************************/
 
@@ -98,7 +98,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Include required files
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	private function includes() {
 
@@ -122,7 +122,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Setup default actions and filters
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	private function setup_actions() {
 
@@ -172,7 +172,7 @@ final class BP_Group_User_Management {
 	 *
 	 * Returns users that have no groups if 'bp_group_id' is set to -1.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @uses BP_Groups_Hierarchy::has_children()
 	 *
@@ -237,7 +237,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Output the add users to group dropdown
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @uses bp_groups_dropdown()
 	 */
@@ -278,7 +278,7 @@ final class BP_Group_User_Management {
 	 * through filters. This affects the way WP redirects paged views in list
 	 * tables - on purpose. See #17685.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @uses call_user_func_array() Calls 'groups_join_group' and 'groups_leave_group'
 	 */
@@ -357,7 +357,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Output admin notices for bulk group actions
 	 *
-	 * @since 0.0.4
+	 * @since 1.0.0
 	 *
 	 * @uses get_current_screen()
 	 */
@@ -400,7 +400,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Output the filter users by group dropdown
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @uses bp_groups_dropdown()
 	 */
@@ -442,7 +442,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Display a 'without-group' group dropdown filter option, with or without custom text
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @uses DomDocument
 	 *
@@ -501,7 +501,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Display the member count per group in the dropdown
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param string $title Group dropdown title value
 	 * @param string $output HTML select element
@@ -536,7 +536,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Add current group query args to the role view links
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @uses DomDocument
 	 *
@@ -580,7 +580,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Output custom styling
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	public function users_print_styles() { ?>
 
@@ -629,7 +629,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Add group column to user management panel
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @uses current_user_can()
 	 *
@@ -649,7 +649,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Return group column content on user management panel
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @uses groups_total_groups_for_user()
 	 *
@@ -699,7 +699,7 @@ final class BP_Group_User_Management {
 	/**
 	 * Add new group link to the Create New admin bar menu
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar
 	 */
@@ -729,7 +729,7 @@ final class BP_Group_User_Management {
 /**
  * Initialize the plugin and return the single plugin instance
  *
- * @since 0.0.1
+ * @since 1.0.0
  *
  * @uses bp_is_active() To check if groups component is active
  * @return BP_Group_User_Management

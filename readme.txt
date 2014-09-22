@@ -2,8 +2,8 @@
 Contributors: Offereins
 Tags: buddypress, groups, member, user, management
 Requires at least: 3.8, BP 2.0
-Tested up to: 3.9, BP 2.0
-Stable tag: 0.0.3
+Tested up to: 4.0, BP 2.1
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,8 +33,12 @@ Supports the following BuddyPress group plugins:
 
 == Changelog ==
 
-= 0.0.4 =
-* Remove search unblocking logic. Require now at least BP 2.0
+= 1.0.0 =
+* Plugin requires now at least BP 2.0
+* Remove search unblocking logic
+* Fix plugin singleton pattern
+* Fix bug where bulk user edit logic frustrated user deletion
+* Fix bulk user edit admin notices
 
 = 0.0.3 =
 * Fix group member user list links
