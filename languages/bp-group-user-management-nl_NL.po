@@ -1,0 +1,129 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: BP Group User Management v0.0.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2014-10-03 12:43:36+0000\n"
+"Last-Translator: Laurens <lmoffereins@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
+"X-Poedit-Language: Dutch\n"
+"X-Poedit-Country: NETHERLANDS\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#. translators: plugin header field 'Name'
+#: bp-group-user-management.php:0
+#@ bp-group-user-management
+msgid "BP Group User Management"
+msgstr ""
+
+#. translators: plugin header field 'PluginURI'
+#: bp-group-user-management.php:0
+#@ bp-group-user-management
+msgid "https://github.com/lmoffereins/bp-group-user-management"
+msgstr ""
+
+#. translators: plugin header field 'Description'
+#: bp-group-user-management.php:0
+#@ bp-group-user-management
+msgid "Integrate BuddyPress group member management with WordPress user management."
+msgstr "Integreer het beheer van BuddyPress groepen met het beheer van gebruikers."
+
+#. translators: plugin header field 'Author'
+#: bp-group-user-management.php:0
+#@ bp-group-user-management
+msgid "Laurens Offereins"
+msgstr ""
+
+#. translators: plugin header field 'AuthorURI'
+#: bp-group-user-management.php:0
+#@ bp-group-user-management
+msgid "https://github.com/lmoffereins"
+msgstr ""
+
+#. translators: plugin header field 'Version'
+#: bp-group-user-management.php:0
+#@ bp-group-user-management
+msgid "0.0.3"
+msgstr ""
+
+#: bp-group-user-management.php:255
+#: bp-group-user-management.php:258
+#@ bp-group-user-management
+msgid "Add to group&hellip;"
+msgstr "Voeg toe aan groep&hellip;"
+
+#: bp-group-user-management.php:264
+#: bp-group-user-management.php:267
+#@ bp-group-user-management
+msgid "Remove from group&hellip;"
+msgstr "Verwijder van groep&hellip;"
+
+#: bp-group-user-management.php:377
+#, php-format
+#@ bp-group-user-management
+msgid "User added to the &#8220;%1$s&#8221; group."
+msgid_plural "%2$d users added to the &#8220;%1$s&#8221; group."
+msgstr[0] "Gebruiker toegevoegd aan de &#8220;%1$s&#8221; groep."
+msgstr[1] "%2$d gebruikers toegevoegd aan de &#8220;%1$s&#8221; groep."
+
+#: bp-group-user-management.php:382
+#, php-format
+#@ bp-group-user-management
+msgid "User removed from the &#8220;%1$s&#8221; group."
+msgid_plural "%2$d users removed from the &#8220;%1$s&#8221; group."
+msgstr[0] "Gebruiker verwijderd uit de &#8220;%1$s&#8221; groep."
+msgstr[1] "%2$d gebruikers verwijderd uit de &#8220;%1$s&#8221; groep."
+
+#: bp-group-user-management.php:416
+#: bp-group-user-management.php:423
+#@ bp-group-user-management
+msgid "Filter by group&hellip;"
+msgstr "Filter naar groep&hellip;"
+
+#: bp-group-user-management.php:429
+#: bp-group-user-management.php:430
+#@ bp-group-user-management
+msgid "Include hierarchy"
+msgstr "Voeg onderliggende hiërarchie toe"
+
+#: bp-group-user-management.php:435
+#@ bp-group-user-management
+msgid "Filter"
+msgstr "Filter"
+
+#: bp-group-user-management.php:466
+#@ bp-group-user-management
+msgid "Without group"
+msgstr "Zonder groep"
+
+#: bp-group-user-management.php:642
+#@ buddypress
+msgid "Groups"
+msgstr ""
+
+#: bp-group-user-management.php:673
+#, php-format
+#@ bp-group-user-management
+msgid "View all %d members of %s"
+msgstr "Toon alle %d gebruikers van %s"
+
+#: bp-group-user-management.php:722
+#@ buddypress
+msgid "Group"
+msgstr ""
+
+#: includes/template.php:154
+#@ bp-group-user-management
+msgid "No group"
+msgstr "Geen groep"
+

@@ -93,6 +93,10 @@ final class BP_Group_User_Management {
 
 		$this->bp_group_hierarchy = defined( 'BP_GROUP_HIERARCHY_VERSION' );
 		$this->bp_group_organizer = function_exists( 'bp_group_organizer_admin' );
+
+		/** Misc *****************************************************/
+
+		$this->domain = 'bp-group-user-management';
 	}
 
 	/**
@@ -106,7 +110,7 @@ final class BP_Group_User_Management {
 
 		require( $this->includes_dir . 'template.php' );
 
-		/** Extend ***************************************************/
+		/** Supports *************************************************/
 
 		// BP Group Hierarchy
 		if ( $this->bp_group_hierarchy ) {
@@ -125,6 +129,10 @@ final class BP_Group_User_Management {
 	 * @since 1.0.0
 	 */
 	private function setup_actions() {
+
+		/** Plugin ***************************************************/
+
+		add_action( 'init', array( $this, 'load_textdomain' ) );
 
 		/** Query ****************************************************/
 
@@ -159,6 +167,37 @@ final class BP_Group_User_Management {
 
 		// Admin Bar
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 90 );
+	}
+
+	/** Plugin ********************************************************/
+
+	/**
+	 * Load the translation file for current language
+	 *
+	 * Note that custom translation files inside the Plugin folder will
+	 * be removed on Plugin updates. If you're creating custom translation
+	 * files, please use the global language folder.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @uses apply_filters() Calls 'plugin_locale' with {@link get_locale()} value
+	 * @uses load_textdomain() To load the textdomain
+	 */
+	public function load_textdomain() {
+
+		// Traditional WordPress plugin locale filter
+		$locale        = apply_filters( 'plugin_locale', get_locale(), $this->domain );
+		$mofile        = sprintf( '%1$s-%2$s.mo', $this->domain, $locale );
+
+		// Setup paths to current locale file
+		$mofile_local  = $this->lang_dir . $mofile;
+		$mofile_global = WP_LANG_DIR . '/bp-group-user-management/' . $mofile;
+
+		// Look in global /wp-content/languages/bp-group-user-management folder first
+		load_textdomain( $this->domain, $mofile_global );
+
+		// Look in global /wp-content/languages/plugins/ and local plugin languages folder
+		load_plugin_textdomain( $this->domain, false, 'bp-group-user-management/languages' );
 	}
 
 	/** Query ********************************************************/
