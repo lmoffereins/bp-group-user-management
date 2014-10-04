@@ -684,7 +684,7 @@ final class BP_Group_User_Management {
 
 		// Show group column if user is capable
 		if ( current_user_can( 'bp_moderate' ) ) { // view?
-			$columns['bp_groups'] = __( 'Groups', 'buddypress' );
+			$columns['bp_groups'] = __( 'Groups', 'bp-group-user-management' );
 		}
 
 		return $columns;
@@ -757,7 +757,7 @@ final class BP_Group_User_Management {
 		$wp_admin_bar->add_node( array(
 			'parent' => 'new-content', // Add to new-content menu node
 			'id'     => 'new-bp_group',
-			'title'  => __( 'Group', 'buddypress' ),
+			'title'  => __( 'Group', 'bp-group-user-management' ),
 			'href'   => trailingslashit( bp_get_root_domain() . '/' . bp_get_groups_root_slug() . '/create' )
 		) );
 	}
