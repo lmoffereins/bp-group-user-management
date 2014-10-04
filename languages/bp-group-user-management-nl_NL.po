@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: BP Group User Management v0.0.3\n"
+"Project-Id-Version: BP Group User Management v1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2014-10-03 12:43:36+0000\n"
+"PO-Revision-Date: 2014-10-04 19:13:37+0000\n"
 "Last-Translator: Laurens <lmoffereins@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,7 +36,7 @@ msgstr ""
 #: bp-group-user-management.php:0
 #@ bp-group-user-management
 msgid "Integrate BuddyPress group member management with WordPress user management."
-msgstr "Integreer het beheer van BuddyPress groepen met het beheer van gebruikers."
+msgstr "Integreer het beheer van leden van BuddyPress groepen met het beheer van WordPress gebruikers."
 
 #. translators: plugin header field 'Author'
 #: bp-group-user-management.php:0
@@ -50,25 +50,19 @@ msgstr ""
 msgid "https://github.com/lmoffereins"
 msgstr ""
 
-#. translators: plugin header field 'Version'
-#: bp-group-user-management.php:0
-#@ bp-group-user-management
-msgid "0.0.3"
-msgstr ""
-
-#: bp-group-user-management.php:255
-#: bp-group-user-management.php:258
+#: bp-group-user-management.php:299
+#: bp-group-user-management.php:302
 #@ bp-group-user-management
 msgid "Add to group&hellip;"
 msgstr "Voeg toe aan groep&hellip;"
 
-#: bp-group-user-management.php:264
-#: bp-group-user-management.php:267
+#: bp-group-user-management.php:308
+#: bp-group-user-management.php:311
 #@ bp-group-user-management
 msgid "Remove from group&hellip;"
 msgstr "Verwijder van groep&hellip;"
 
-#: bp-group-user-management.php:377
+#: bp-group-user-management.php:422
 #, php-format
 #@ bp-group-user-management
 msgid "User added to the &#8220;%1$s&#8221; group."
@@ -76,7 +70,7 @@ msgid_plural "%2$d users added to the &#8220;%1$s&#8221; group."
 msgstr[0] "Gebruiker toegevoegd aan de &#8220;%1$s&#8221; groep."
 msgstr[1] "%2$d gebruikers toegevoegd aan de &#8220;%1$s&#8221; groep."
 
-#: bp-group-user-management.php:382
+#: bp-group-user-management.php:427
 #, php-format
 #@ bp-group-user-management
 msgid "User removed from the &#8220;%1$s&#8221; group."
@@ -84,46 +78,52 @@ msgid_plural "%2$d users removed from the &#8220;%1$s&#8221; group."
 msgstr[0] "Gebruiker verwijderd uit de &#8220;%1$s&#8221; groep."
 msgstr[1] "%2$d gebruikers verwijderd uit de &#8220;%1$s&#8221; groep."
 
-#: bp-group-user-management.php:416
-#: bp-group-user-management.php:423
+#: bp-group-user-management.php:460
+#: bp-group-user-management.php:467
 #@ bp-group-user-management
 msgid "Filter by group&hellip;"
 msgstr "Filter naar groep&hellip;"
 
-#: bp-group-user-management.php:429
-#: bp-group-user-management.php:430
+#: bp-group-user-management.php:473
+#: bp-group-user-management.php:474
 #@ bp-group-user-management
 msgid "Include hierarchy"
 msgstr "Voeg onderliggende hiërarchie toe"
 
-#: bp-group-user-management.php:435
+#: bp-group-user-management.php:479
 #@ bp-group-user-management
 msgid "Filter"
 msgstr "Filter"
 
-#: bp-group-user-management.php:466
+#: bp-group-user-management.php:512
 #@ bp-group-user-management
 msgid "Without group"
 msgstr "Zonder groep"
 
-#: bp-group-user-management.php:642
-#@ buddypress
+#: bp-group-user-management.php:687
+#@ bp-group-user-management
 msgid "Groups"
-msgstr ""
+msgstr "Groepen"
 
-#: bp-group-user-management.php:673
+#: bp-group-user-management.php:718
 #, php-format
 #@ bp-group-user-management
 msgid "View all %d members of %s"
 msgstr "Toon alle %d gebruikers van %s"
 
-#: bp-group-user-management.php:722
-#@ buddypress
+#: bp-group-user-management.php:760
+#@ bp-group-user-management
 msgid "Group"
-msgstr ""
+msgstr "Groep"
 
-#: includes/template.php:154
+#: includes/template.php:160
 #@ bp-group-user-management
 msgid "No group"
 msgstr "Geen groep"
+
+#. translators: plugin header field 'Version'
+#: bp-group-user-management.php:0
+#@ bp-group-user-management
+msgid "1.0.0"
+msgstr ""
 
