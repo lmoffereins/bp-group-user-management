@@ -148,10 +148,14 @@ class BPGUM_Organizer {
  */
 function bpgum_organizer() {
 	$bpgum = bp_group_user_management();
-	$bpgum->extend->organizer = new BPGUM_Organizer;
+
+	// When BP Group Organizer is active
+	if ( function_exists( 'bp_group_organizer_admin' ) ) {
+		$bpgum->extend->organizer = new BPGUM_Organizer;
+	}
 }
 
-/* Fire on organizer page */
+// Load when main plugin class is loaded
 add_action( 'bp_group_user_management_loaded', 'bpgum_organizer' );
 
 endif;

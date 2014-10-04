@@ -92,7 +92,6 @@ final class BP_Group_User_Management {
 		/** Supports *************************************************/
 
 		$this->bp_group_hierarchy = defined( 'BP_GROUP_HIERARCHY_VERSION' );
-		$this->bp_group_organizer = function_exists( 'bp_group_organizer_admin' );
 
 		/** Misc *****************************************************/
 
@@ -106,17 +105,11 @@ final class BP_Group_User_Management {
 	 * @since 1.0.0
 	 */
 	private function includes() {
-
-		/** Template *************************************************/
-
 		require( $this->includes_dir . 'template.php' );
 
 		/** Supports *************************************************/
 
-		// BP Group Organizer
-		if ( $this->bp_group_organizer ) {
-			require( $this->includes_dir . 'extend/bp-group-organizer.php' );
-		}
+		require( $this->includes_dir . 'extend/bp-group-organizer.php' );
 	}
 
 	/**
