@@ -33,6 +33,11 @@ Supports the following BuddyPress group plugins:
 
 == Changelog ==
 
+= 1.0.1 =
+* Added language support
+* Added Dutch language
+* Arbitrary code cleanup
+
 = 1.0.0 =
 * Plugin requires now at least BP 2.0
 * Remove search unblocking logic
