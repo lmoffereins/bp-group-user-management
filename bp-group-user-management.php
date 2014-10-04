@@ -173,6 +173,9 @@ final class BP_Group_User_Management {
 
 		// Admin Bar
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 90 );
+
+		// Fire plugin loaded hook
+		do_action( 'bp_group_user_management_loaded' );
 	}
 
 	/** Plugin ********************************************************/
