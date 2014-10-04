@@ -113,11 +113,6 @@ final class BP_Group_User_Management {
 
 		/** Supports *************************************************/
 
-		// BP Group Hierarchy
-		if ( $this->bp_group_hierarchy ) {
-			require( $this->includes_dir . 'extend/bp-group-hierarchy.php' );
-		}
-
 		// BP Group Organizer
 		if ( $this->bp_group_organizer ) {
 			require( $this->includes_dir . 'extend/bp-group-organizer.php' );
