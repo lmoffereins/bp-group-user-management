@@ -742,7 +742,7 @@ final class BP_Group_User_Management {
 	/** Admin Bar ****************************************************/
 
 	/**
-	 * Add new group link to the Create New admin bar menu
+	 * Add New Group link to the Create New admin bar menu
 	 *
 	 * @since 1.0.0
 	 *
@@ -754,19 +754,12 @@ final class BP_Group_User_Management {
 		if ( ! bp_user_can_create_groups() )
 			return;
 
-		// Set node target uri
-		if ( $this->bp_group_organizer && current_user_can( 'bp_moderate' ) ) {
-			$href = add_query_arg( 'page', 'group_organizer', admin_url( 'admin.php' ) );
-		} else {
-			$href = trailingslashit( bp_get_root_domain() . '/' . bp_get_groups_root_slug() . '/create' );
-		}
-
 		// New Group
 		$wp_admin_bar->add_node( array(
 			'parent' => 'new-content', // Add to new-content menu node
 			'id'     => 'new-bp_group',
 			'title'  => __( 'Group', 'buddypress' ),
-			'href'   => $href
+			'href'   => trailingslashit( bp_get_root_domain() . '/' . bp_get_groups_root_slug() . '/create' )
 		) );
 	}
 }

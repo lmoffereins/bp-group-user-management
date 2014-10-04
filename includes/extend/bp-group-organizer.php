@@ -26,6 +26,9 @@ class BPGUM_Organizer {
 	public function __construct() {
 		add_action( 'admin_print_styles',  array( $this, 'print_styles'      ) );
 		// add_filter( 'bp_get_group_avatar', array( $this, 'group_avatar_meso' ) );
+
+		// Admin Bar
+		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 91 );
 	}
 
 	/** Methods ******************************************************/
@@ -35,9 +38,8 @@ class BPGUM_Organizer {
 	 *
 	 * @since 0.0.1
 	 */
-	public function print_styles() {
-	?>
-		
+	public function print_styles() { ?>
+
 		<style type="text/css">
 			.menu-item-handle .item-title {
 				padding-left: 25px;
@@ -50,17 +52,17 @@ class BPGUM_Organizer {
 				margin: 5px;
 			}
 		</style>
-		
-	<?php
+
+		<?php
 	}
 
 	/**
-	 * Enlarge the 'micro' group avatar from 15px to 30px 
-	 * 
+	 * Enlarge the 'micro' group avatar from 15px to 30px
+	 *
 	 * @see bp_get_group_avatar_micro() in BP Group Organizer
 	 *
 	 * @since 0.0.1
-	 * 
+	 *
 	 * @param string $avatar Avatar img element
 	 * @return string Avatar
 	 */
@@ -82,7 +84,7 @@ class BPGUM_Organizer {
 	 * Restore the group avatar filter
 	 *
 	 * @since 0.0.1
-	 * 
+	 *
 	 * @param string $avatar Avatar img element
 	 * @return string Avatar
 	 */
@@ -98,6 +100,31 @@ class BPGUM_Organizer {
 		return $avatar;
 	}
 
+	/** Admin Bar ****************************************************/
+
+	/**
+	 * Modify New Group link in the Create New admin bar menu
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar
+	 */
+	public function admin_bar_menu( $wp_admin_bar ) {
+
+		// Get the New Group node
+		if ( $node = (array) $wp_admin_bar->get_node( 'new-bp_group' ) ) {
+
+			// Manipulate node for admins
+			if ( current_user_can( 'bp_moderate' ) ) {
+
+				// Send admins to Group Organizer page
+				$node['href'] = add_query_arg( 'page', 'group_organizer', admin_url( 'admin.php' ) );
+			}
+
+			// Overwrite node
+			$wp_admin_bar->add_node( $node );
+		}
+	}
 }
 
 /**
