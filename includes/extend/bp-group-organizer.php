@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BuddyPress Group Organizer Extension
+ * BP Group Organizer Extension Functions
  *
  * @package BP Group User Management
  * @subpackage Extend
@@ -24,14 +24,25 @@ class BPGUM_Organizer {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		add_action( 'admin_print_styles',  array( $this, 'print_styles'      ) );
-		// add_filter( 'bp_get_group_avatar', array( $this, 'group_avatar_meso' ) );
+
+		// Group Organizer admin page
+		add_action( 'load-groups_page_group_organizer', array( $this, 'admin_page' ), 20 );
 
 		// Admin Bar
-		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 91 );
+		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 90 );
 	}
 
 	/** Methods ******************************************************/
+
+	/**
+	 * Setup actions for the Group Organizer admin page
+	 *
+	 * @since 1.0.1
+	 */
+	public function admin_page() {
+		add_action( 'admin_print_styles',  array( $this, 'print_styles'      ) );
+		// add_filter( 'bp_get_group_avatar', array( $this, 'group_avatar_meso' ) );
+	}
 
 	/**
 	 * Output custom styles for the organizer admin page
@@ -105,7 +116,7 @@ class BPGUM_Organizer {
 	/**
 	 * Modify New Group link in the Create New admin bar menu
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.1
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar
 	 */
@@ -130,15 +141,17 @@ class BPGUM_Organizer {
 /**
  * Setup extension for BP Group Organizer
  *
- * @since 1.0.0
+ * @since 1.0.1
  *
+ * @uses bp_group_user_management()
  * @uses BPGUM_Organizer
  */
-function bpgum_setup_organizer() {
-	new BPGUM_Organizer;
+function bpgum_organizer() {
+	$bpgum = bp_group_user_management();
+	$bpgum->extend->organizer = new BPGUM_Organizer;
 }
 
 /* Fire on organizer page */
-add_action( 'load-groups_page_group_organizer', 'bpgum_setup_organizer', 20 );
+add_action( 'bp_group_user_management_loaded', 'bpgum_organizer' );
 
 endif;

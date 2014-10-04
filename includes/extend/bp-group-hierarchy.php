@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BuddyPress Group Hierarchy Extension
+ * BP Group Hierarchy Extension Functions
  *
  * @package BP Group User Management
  * @subpackage Extend
@@ -31,7 +31,7 @@ function bpgum_setup_hierarchy() {
 	new BPGUM_Hierarchy;
 }
 
-/* Fire on bp_include */
+// Fire on bp_include
 add_action( 'bp_include', 'bpgum_setup_hierarchy', 20 );
 
 endif;

@@ -97,6 +97,7 @@ final class BP_Group_User_Management {
 		/** Misc *****************************************************/
 
 		$this->domain = 'bp-group-user-management';
+		$this->extend = new stdClass();
 	}
 
 	/**
