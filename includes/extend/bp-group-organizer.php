@@ -14,14 +14,14 @@ if ( ! class_exists( 'BPGUM_Organizer' ) ) :
 /**
  * Extension class for BP Group Organizer
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 class BPGUM_Organizer {
 
 	/**
 	 * Setup default actions
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		add_action( 'admin_print_styles',  array( $this, 'print_styles'      ) );
@@ -36,7 +36,7 @@ class BPGUM_Organizer {
 	/**
 	 * Output custom styles for the organizer admin page
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	public function print_styles() { ?>
 
@@ -61,7 +61,7 @@ class BPGUM_Organizer {
 	 *
 	 * @see bp_get_group_avatar_micro() in BP Group Organizer
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param string $avatar Avatar img element
 	 * @return string Avatar
@@ -83,7 +83,7 @@ class BPGUM_Organizer {
 	/**
 	 * Restore the group avatar filter
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param string $avatar Avatar img element
 	 * @return string Avatar
@@ -130,7 +130,7 @@ class BPGUM_Organizer {
 /**
  * Setup extension for BP Group Organizer
  *
- * @since 0.0.1
+ * @since 1.0.0
  *
  * @uses BPGUM_Organizer
  */
