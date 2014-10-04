@@ -738,6 +738,8 @@ final class BP_Group_User_Management {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @todo Remove since it's out of the plugin's scope.
+	 *
 	 * @param WP_Admin_Bar $wp_admin_bar
 	 */
 	public function admin_bar_menu( $wp_admin_bar ) {

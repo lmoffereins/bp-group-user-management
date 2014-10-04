@@ -3,6 +3,8 @@
 /**
  * BP Group Organizer Extension Functions
  *
+ * @todo Remove since it's out of the plugin's scope.
+ *
  * @package BP Group User Management
  * @subpackage Extend
  */
