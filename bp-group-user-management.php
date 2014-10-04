@@ -62,7 +62,7 @@ final class BP_Group_User_Management {
 	 *
 	 * @since 1.0.0
 	 */
-	private function construct() { /* Do nothing here */ }
+	private function __construct() { /* Do nothing here */ }
 
 	/**
 	 * Setup class default variables
