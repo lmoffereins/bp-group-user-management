@@ -127,8 +127,14 @@ final class BP_Group_User_Management {
 	 * Setup default actions and filters
 	 *
 	 * @since 1.0.0
+	 *
+	 * @uses bp_is_active() To check if groups component is active
 	 */
 	private function setup_actions() {
+
+		// Bail if groups component is not active
+		if ( ! bp_is_active( 'groups' ) )
+			return;
 
 		/** Plugin ***************************************************/
 
@@ -196,7 +202,7 @@ final class BP_Group_User_Management {
 		// Look in global /wp-content/languages/bp-group-user-management folder first
 		load_textdomain( $this->domain, $mofile_global );
 
-		// Look in global /wp-content/languages/plugins/ and local plugin languages folder
+		// Look in global /wp-content/languages/plugins/ and plugin languages folder
 		load_plugin_textdomain( $this->domain, false, 'bp-group-user-management/languages' );
 	}
 
@@ -770,15 +776,9 @@ final class BP_Group_User_Management {
  *
  * @since 1.0.0
  *
- * @uses bp_is_active() To check if groups component is active
  * @return BP_Group_User_Management
  */
 function bp_group_user_management() {
-
-	// Bail if groups component is not active
-	if ( ! bp_is_active( 'groups' ) )
-		return;
-
 	return BP_Group_User_Management::instance();
 }
 
